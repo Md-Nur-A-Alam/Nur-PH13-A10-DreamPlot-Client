@@ -3,12 +3,22 @@
 import React, { useState, useEffect } from 'react';
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'react-toastify';
-import { PersonIcon } from '@radix-ui/react-icons';
+import { PersonIcon, Cross1Icon } from '@radix-ui/react-icons';
 
 export default function ManageUsers() {
     const { data: session } = authClient.useSession();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    
+    // Create user modal states
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        role: 'Admin'
+    });
+    const [submitting, setSubmitting] = useState(false);
 
     const fetchUsers = async () => {
         try {
@@ -32,6 +42,38 @@ export default function ManageUsers() {
     useEffect(() => {
         fetchUsers();
     }, [session]);
+
+    const handleCreateUser = async (e) => {
+        e.preventDefault();
+        if (!formData.name || !formData.email || !formData.password) {
+            toast.error("All fields are required.");
+            return;
+        }
+        setSubmitting(true);
+        try {
+            const res = await fetch('/api/admin/create-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            const data = await res.json();
+            if (data.success) {
+                toast.success("User created successfully!");
+                setIsModalOpen(false);
+                setFormData({ name: '', email: '', password: '', role: 'Admin' });
+                fetchUsers();
+            } else {
+                toast.error(data.error || "Failed to create user.");
+            }
+        } catch (err) {
+            console.error("Error creating user:", err);
+            toast.error("An error occurred.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     const handleRoleChange = async (userId, newRole) => {
         if (!window.confirm(`Are you sure you want to change this user's role to ${newRole}?`)) return;
@@ -69,13 +111,21 @@ export default function ManageUsers() {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl sm:text-3xl font-black text-[#0A192F] tracking-tight antialiased">
-                    All Users
-                </h1>
-                <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mt-1">
-                    Manage accounts, permissions, and system access levels
-                </p>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl sm:text-3xl font-black text-[#0A192F] tracking-tight antialiased">
+                        All Users
+                    </h1>
+                    <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mt-1">
+                        Manage accounts, permissions, and system access levels
+                    </p>
+                </div>
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="btn btn-md border-none bg-[#319795] text-white hover:bg-[#277a78] font-bold rounded-xl shadow-md transition-all duration-200"
+                >
+                    + Add New Admin / User
+                </button>
             </div>
 
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-[0_2px_15px_rgba(0,0,0,0.01)]">
@@ -138,6 +188,88 @@ export default function ManageUsers() {
                     </table>
                 </div>
             </div>
+
+            {/* Create User Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl border border-slate-100 relative">
+                        <button 
+                            onClick={() => setIsModalOpen(false)}
+                            className="absolute right-6 top-6 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                        >
+                            <Cross1Icon className="w-5 h-5" />
+                        </button>
+
+                        <div className="mb-6">
+                            <h2 className="text-xl font-black text-[#0A192F] tracking-tight">Create User Account</h2>
+                            <p className="text-slate-400 text-xs mt-1">Register a new profile directly into the system database.</p>
+                        </div>
+
+                        <form onSubmit={handleCreateUser} className="space-y-4">
+                            <div className="form-control space-y-1">
+                                <label className="label py-0"><span className="label-text text-xs font-bold text-slate-500 uppercase">Full Name</span></label>
+                                <input 
+                                    type="text" 
+                                    required 
+                                    placeholder="Jane Doe" 
+                                    value={formData.name}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                    className="input input-bordered w-full h-11 bg-slate-50 border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-[#319795] focus:bg-white rounded-xl"
+                                />
+                            </div>
+
+                            <div className="form-control space-y-1">
+                                <label className="label py-0"><span className="label-text text-xs font-bold text-slate-500 uppercase">Email Address</span></label>
+                                <input 
+                                    type="email" 
+                                    required 
+                                    placeholder="jane@company.com" 
+                                    value={formData.email}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                                    className="input input-bordered w-full h-11 bg-slate-50 border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-[#319795] focus:bg-white rounded-xl"
+                                />
+                            </div>
+
+                            <div className="form-control space-y-1">
+                                <label className="label py-0"><span className="label-text text-xs font-bold text-slate-500 uppercase">Password</span></label>
+                                <input 
+                                    type="password" 
+                                    required 
+                                    placeholder="••••••••" 
+                                    value={formData.password}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                                    className="input input-bordered w-full h-11 bg-slate-50 border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-[#319795] focus:bg-white rounded-xl"
+                                />
+                            </div>
+
+                            <div className="form-control space-y-1">
+                                <label className="label py-0"><span className="label-text text-xs font-bold text-slate-500 uppercase">Account Role</span></label>
+                                <select 
+                                    value={formData.role}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
+                                    className="select select-bordered w-full h-11 min-h-0 bg-slate-50 border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-[#319795] focus:bg-white rounded-xl font-semibold text-slate-700"
+                                >
+                                    <option value="Admin">Admin</option>
+                                    <option value="Owner">Owner</option>
+                                    <option value="Tenant">Tenant</option>
+                                </select>
+                            </div>
+
+                            <button 
+                                type="submit" 
+                                disabled={submitting}
+                                className="btn w-full h-11 min-h-0 mt-4 border-none bg-black hover:bg-slate-900 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-all"
+                            >
+                                {submitting ? (
+                                    <span className="loading loading-spinner loading-sm text-slate-400"></span>
+                                ) : (
+                                    <span>Create User</span>
+                                )}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
