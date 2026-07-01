@@ -16,6 +16,48 @@ export default function MyProperties() {
     // Edit Modal State
     const [editingProperty, setEditingProperty] = useState(null);
     const [savingEdit, setSavingEdit] = useState(false);
+    const [uploadingEditImage, setUploadingEditImage] = useState(false);
+
+    const handleEditImageUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error("Image file is too large. Please upload an image smaller than 5MB.");
+            return;
+        }
+
+        setUploadingEditImage(true);
+        try {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY || '2883ef57db2ff13247076d6ec555a6d5';
+            const keyToUse = apiKey === 'placeholder_imgbb_api_key' ? 'ba7815cf1ad0ca02ec03df6a17b3f2df' : apiKey;
+
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${keyToUse}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to upload image to ImgBB.");
+            }
+
+            const data = await res.json();
+            if (data?.data?.url) {
+                setEditingProperty(prev => ({ ...prev, imageURL: data.data.url }));
+                toast.success("Image uploaded successfully!");
+            } else {
+                throw new Error("Invalid response from ImgBB.");
+            }
+        } catch (err) {
+            console.error("Upload error:", err);
+            toast.error("Could not upload image directly. Please paste a URL manually or try again.");
+        } finally {
+            setUploadingEditImage(false);
+        }
+    };
 
     const fetchProperties = async () => {
         if (!session?.user?.email) return;
@@ -302,9 +344,81 @@ export default function MyProperties() {
                                 </div>
                             </div>
 
-                            <div className="form-control w-full space-y-1">
-                                <label className="label py-0" htmlFor="edit-image"><span className="label-text text-xs font-bold text-slate-500 uppercase">Image URL</span></label>
-                                <input type="url" id="edit-image" name="imageURL" value={editingProperty.imageURL} onChange={handleEditChange} required className="input input-bordered w-full h-11 text-sm bg-slate-50 focus:bg-white rounded-xl" />
+                            {/* Image URL & Direct Upload Option */}
+                            <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-xs font-bold text-slate-500 uppercase">Property Image</span>
+                                    <span className="text-[10px] text-slate-400 font-semibold">Upload directly or paste a web URL</span>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {/* Drag and drop style file selector */}
+                                    <div className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-[#319795] rounded-xl p-3 transition-all bg-white relative min-h-[90px]">
+                                        <input 
+                                            type="file" 
+                                            accept="image/*"
+                                            onChange={handleEditImageUpload}
+                                            disabled={uploadingEditImage}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
+                                        />
+                                        {uploadingEditImage ? (
+                                            <div className="flex flex-col items-center gap-1.5 py-1">
+                                                <span className="loading loading-spinner loading-sm text-[#319795]"></span>
+                                                <p className="text-[11px] text-slate-500 font-bold">Uploading...</p>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-1 py-1 text-center">
+                                                <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                <p className="text-xs text-[#319795] font-bold">Click to Upload</p>
+                                                <p className="text-[9px] text-slate-400">PNG, JPG or WEBP up to 5MB</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Main Image URL Input & Preview */}
+                                    <div className="space-y-2">
+                                        <div className="form-control w-full space-y-1">
+                                            <label className="label py-0" htmlFor="edit-image">
+                                                <span className="label-text text-[10px] font-bold text-slate-400 uppercase">Or Image URL Link</span>
+                                            </label>
+                                            <input 
+                                                type="url" 
+                                                id="edit-image" 
+                                                name="imageURL" 
+                                                value={editingProperty.imageURL} 
+                                                onChange={handleEditChange} 
+                                                required 
+                                                className="input input-bordered w-full h-10 bg-white border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-[#319795] rounded-xl transition-all" 
+                                            />
+                                        </div>
+
+                                        {editingProperty.imageURL && (
+                                            <div className="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-slate-200/80">
+                                                <div className="w-8 h-8 rounded-lg bg-slate-100 overflow-hidden relative shrink-0 border border-slate-100">
+                                                    <img src={editingProperty.imageURL} alt="Preview" className="object-cover w-full h-full" />
+                                                </div>
+                                                <div className="grow min-w-0">
+                                                    <p className="text-[9px] text-slate-500 truncate">{editingProperty.imageURL}</p>
+                                                </div>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => setEditingProperty(prev => ({ ...prev, imageURL: '' }))}
+                                                    className="btn btn-ghost btn-circle btn-xs text-red-500 hover:bg-red-50"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {process.env.NEXT_PUBLIC_IMGBB_API_KEY === 'placeholder_imgbb_api_key' && (
+                                    <p className="text-[9px] text-slate-400 leading-normal italic pt-1 border-t border-slate-200/50">
+                                        Note: Direct upload is running in demo mode. To configure your own cloud storage, register for a free API key at <a href="https://api.imgbb.com" target="_blank" rel="noopener noreferrer" className="underline text-[#319795] hover:text-[#277a78]">api.imgbb.com</a> and replace <code>NEXT_PUBLIC_IMGBB_API_KEY</code> in client <code>.env</code>.
+                                    </p>
+                                )}
                             </div>
 
                             <div className="form-control w-full space-y-1">

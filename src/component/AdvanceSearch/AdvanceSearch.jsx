@@ -5,6 +5,20 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PinTopIcon, ChevronLeftIcon, ChevronRightIcon, HeartIcon } from '@radix-ui/react-icons';
 
+const getSingleImageUrl = (src) => {
+    if (!src) return "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600";
+    if (Array.isArray(src)) {
+        return getSingleImageUrl(src[0]);
+    }
+    if (typeof src === 'string') {
+        const parts = src.split(/[;,]+/).map(s => s.trim()).filter(Boolean);
+        if (parts.length > 0) {
+            return parts[0];
+        }
+    }
+    return src || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600";
+};
+
 const AdvanceSearch = ({ initialData }) => {
     // 1. Core State Hooks
     const [properties, setProperties] = useState(initialData?.properties || []);
@@ -160,7 +174,7 @@ const AdvanceSearch = ({ initialData }) => {
                             {/* Graphic Thumbnail Display Frame Component */}
                             <div className="relative w-full aspect-4/3 bg-slate-100 overflow-hidden">
                                 <Image 
-                                    src={property.imageURL || property.images?.[0] || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600"} 
+                                    src={getSingleImageUrl(property.imageURL || property.images?.[0])} 
                                     alt={property.title}
                                     fill
                                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

@@ -4,6 +4,20 @@ import Image from 'next/image';
 import { getFeaturedProperties } from '@/app/lib/data';
 import { PinTopIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 
+const getSingleImageUrl = (src) => {
+    if (!src) return "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600";
+    if (Array.isArray(src)) {
+        return getSingleImageUrl(src[0]);
+    }
+    if (typeof src === 'string') {
+        const parts = src.split(/[;,]+/).map(s => s.trim()).filter(Boolean);
+        if (parts.length > 0) {
+            return parts[0];
+        }
+    }
+    return src || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600";
+};
+
 const FeaturedProperties = async () => {
     // Fetch directly optimized array payload (exactly 6 items)
     const featuredProperties = await getFeaturedProperties() || [];
@@ -43,7 +57,7 @@ const FeaturedProperties = async () => {
                             {/* Card Media Wrapper */}
                             <div className="relative w-full aspect-4/3 bg-slate-100 overflow-hidden">
                                 <Image 
-                                    src={property.imageURL || property.images?.[0]} 
+                                    src={getSingleImageUrl(property.imageURL || property.images?.[0])} 
                                     alt={property.title}
                                     fill
                                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

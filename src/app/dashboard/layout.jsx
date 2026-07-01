@@ -74,6 +74,7 @@ export default function DashboardLayout({ children }) {
         switch (role) {
             case 'Admin':
                 return [
+                    { name: 'Overview', path: '/dashboard/admin', icon: <BarChartIcon className="w-4 h-4" /> },
                     { name: 'All Users', path: '/dashboard/admin/users', icon: <PersonIcon className="w-4 h-4" /> },
                     { name: 'All Properties', path: '/dashboard/admin/properties', icon: <HomeIcon className="w-4 h-4" /> },
                     { name: 'All Bookings', path: '/dashboard/admin/bookings', icon: <CalendarIcon className="w-4 h-4" /> },
@@ -91,6 +92,7 @@ export default function DashboardLayout({ children }) {
             case 'Tenant':
             default:
                 return [
+                    { name: 'Overview', path: '/dashboard/tenant', icon: <BarChartIcon className="w-4 h-4" /> },
                     { name: 'My Bookings', path: '/dashboard/bookings', icon: <CalendarIcon className="w-4 h-4" /> },
                     { name: 'Favorites', path: '/dashboard/favorites', icon: <HeartIcon className="w-4 h-4" /> },
                     { name: 'My Profile', path: '/dashboard/profile', icon: <PersonIcon className="w-4 h-4" /> },

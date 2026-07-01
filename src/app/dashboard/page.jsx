@@ -15,11 +15,11 @@ export default function DashboardHome() {
             } else {
                 const role = session.user?.role || 'Tenant';
                 if (role === 'Admin') {
-                    router.push('/dashboard/admin/users');
+                    router.push('/dashboard/admin');
                 } else if (role === 'Owner') {
                     router.push('/dashboard/owner');
                 } else {
-                    router.push('/dashboard/bookings');
+                    router.push('/dashboard/tenant');
                 }
             }
         }
