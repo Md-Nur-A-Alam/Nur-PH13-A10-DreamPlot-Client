@@ -19,16 +19,24 @@ const getSingleImageUrl = (src) => {
     return src || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600";
 };
 
-const AdvanceSearch = ({ initialData }) => {
-    // 1. Core State Hooks
-    const [properties, setProperties] = useState(initialData?.properties || []);
-    const [totalPages, setTotalPages] = useState(initialData?.totalPages || 1);
+const AdvanceSearch = ({ initialData, urlParams }) => {
+    // Determine if we have any search parameters active in URL to avoid layout flash
+    const hasUrlQuery = !!(
+        urlParams?.search || 
+        (urlParams?.type && urlParams.type !== 'All Types') || 
+        (urlParams?.minPrice && urlParams.minPrice > 0) || 
+        (urlParams?.maxPrice && urlParams.maxPrice < 15000)
+    );
+
+    // 1. Core State Hooks initialized from urlParams
+    const [properties, setProperties] = useState(() => hasUrlQuery ? [] : (initialData?.properties || []));
+    const [totalPages, setTotalPages] = useState(() => hasUrlQuery ? 1 : (initialData?.totalPages || 1));
     const [loading, setLoading] = useState(false);
 
-    const [searchLocation, setSearchLocation] = useState('');
-    const [propertyType, setPropertyType] = useState('All Types');
-    const [minPrice, setMinPrice] = useState(0);
-    const [maxPrice, setMaxPrice] = useState(15000);
+    const [searchLocation, setSearchLocation] = useState(urlParams?.search || '');
+    const [propertyType, setPropertyType] = useState(urlParams?.type || 'All Types');
+    const [minPrice, setMinPrice] = useState(urlParams?.minPrice ?? 0);
+    const [maxPrice, setMaxPrice] = useState(urlParams?.maxPrice ?? 15000);
     const [sortBy, setSortBy] = useState('latest');
     const [currentPage, setCurrentPage] = useState(1);
 
