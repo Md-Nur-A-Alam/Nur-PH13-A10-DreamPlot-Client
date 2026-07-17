@@ -1,19 +1,36 @@
 <div align="center">
   <img src="assets/Home%20page.png" alt="DreamPlot Banner" width="100%" />
   
-  <h1>🌟 DreamPlot - Property Rental & Booking Platform</h1>
-  <p>A sophisticated, premium backend API powering the transparent property rental and booking marketplace.</p>
+  <h1>🌟 DreamPlot - Client Application</h1>
+  <p>A sophisticated, premium frontend web application built for property rental and booking.</p>
 
   <p>
-    <a href="https://md-nur-a-alam-nur-ph-13-a10-dream-p.vercel.app"><img src="https://img.shields.io/badge/Live_Site-Server-green?style=for-the-badge&logo=vercel" alt="Server Live Site" /></a>
     <a href="https://nur-ph-13-a10-dream-plot-client.vercel.app"><img src="https://img.shields.io/badge/Live_Site-Client-blue?style=for-the-badge&logo=vercel" alt="Client Live Site" /></a>
+    <a href="https://md-nur-a-alam-nur-ph-13-a10-dream-p.vercel.app"><img src="https://img.shields.io/badge/Live_Site-Server-green?style=for-the-badge&logo=vercel" alt="Server Live Site" /></a>
   </p>
 </div>
 
 <br />
 
-## 📖 Overview
-This repository contains the **backend server** code for DreamPlot. It serves as a secure, high-performance API connecting Tenants and Property Owners, moderated by an Admin. The platform supports advanced search, complex booking pipelines, secure payments via Stripe, and comprehensive role-based endpoints.
+## 📖 Comprehensive Overview
+DreamPlot serves as a transparent marketplace connecting **Tenants** and **Property Owners**, expertly moderated by an **Admin**. Built on the modern **Next.js App Router**, the platform supports advanced search, booking pipelines, secure payments via Stripe, user review systems, and comprehensive role-based dashboards. 
+
+---
+
+## 🏗️ Architecture & Project Structure
+
+### Frontend Architecture
+- **Next.js App Router**: Utilizes modern server-side rendering (SSR) and static site generation (SSG) for optimal SEO and performance.
+- **State Management & Data Fetching**: Powered by **TanStack React Query** for aggressive caching, background updates, and optimistic UI rendering.
+- **Styling System**: A utility-first approach utilizing **TailwindCSS** combined with **DaisyUI** for pre-built, themeable components.
+- **Authentication**: Secured via **better-auth** supporting seamless OAuth and Credentials integration synced with the backend JWT logic.
+- **Animation Layer**: Interactions and micro-animations driven by **Framer Motion**.
+
+### Folder Structure (Highlights)
+- `/src/app`: Contains all Next.js page routes, layouts, and API routes (`/api`).
+- `/src/components`: Reusable UI components (Navbars, Cards, Modals).
+- `/public`: Static assets and icons.
+- `/assets`: Showcased project screenshots and banners.
 
 ---
 
@@ -40,31 +57,34 @@ This repository contains the **backend server** code for DreamPlot. It serves as
 <br />
 
 ## ✨ Core Features
-> The foundation that makes DreamPlot powerful.
+> Explore what makes DreamPlot stand out.
 
-- 🔌 **RESTful API**: Clean and secure API endpoints for all frontend operations.
-- 🔐 **Role-Based Access Control (RBAC)**: Distinct permissions for Admin, Owner, and Tenant validated via JWT.
-- 🗄️ **Database Management**: MongoDB integration via Mongoose with structured schemas and complex aggregation pipelines.
-- 💳 **Payment Processing**: Integrated Stripe backend for processing property bookings securely.
-- 🛡️ **Authentication & Authorization**: JWT token generation and validation middleware for secure route access.
-- ✅ **Data Validation**: Secure data handling for properties, users, and transactions.
+- 🔐 **Role-Based Access Control (RBAC)**: Distinct layouts and features for Admin, Owner, and Tenant.
+- 📊 **Interactive Dashboard**:
+  - **Tenant**: My Bookings, Favorites list, User Profile.
+  - **Owner**: Analytics charts (`Recharts`), Add/Update/Delete Listings, Booking request moderation.
+  - **Admin**: All Users management, Property approvals/moderation, Transaction audits.
+- 🔍 **Advanced Search & Filtering**: Location-based search, property type filtering, price sorting.
+- 💳 **Secure Payments**: Seamless `@stripe/react-stripe-js` integration for front-end card tokenization.
+- ⭐ **Review System**: Tenants can rate and leave comments on properties.
+- 🎨 **Theme Customization**: Beautiful Light and Dark modes built into DaisyUI.
 
 <br />
 
-## 🛠️ Tech Stack & Architecture
+## 🛠️ Tech Stack
 <p align="center">
-  <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" />
-  <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="Express.js" />
-  <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-  <img src="https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens" alt="JWT" />
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/TanStack_Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=white" alt="React Query" />
   <img src="https://img.shields.io/badge/Stripe-626CD9?style=for-the-badge&logo=Stripe&logoColor=white" alt="Stripe" />
+  <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
 </p>
 
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MongoDB, Mongoose
-- **Security**: JSON Web Token (JWT), bcryptjs, CORS
-- **Payment Gateway**: Stripe SDK
+- **Core**: Next.js 14+ (App Router), React 18, React Hook Form
+- **State & Data**: TanStack React Query, Axios
+- **Styling & UI**: TailwindCSS, DaisyUI, Radix Icons, React Toastify
+- **Security**: better-auth (OAuth), JSON Web Token (JWT) integration
 
 <br />
 
@@ -72,8 +92,8 @@ This repository contains the **backend server** code for DreamPlot. It serves as
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/Md-Nur-A-Alam/Md-Nur-A-Alam-Nur-PH13-A10-DreamPlot-Server.git
-cd Md-Nur-A-Alam-Nur-PH13-A10-DreamPlot-Server
+git clone https://github.com/Md-Nur-A-Alam/Nur-PH13-A10-DreamPlot-Client.git
+cd Nur-PH13-A10-DreamPlot-Client
 ```
 
 ### 2️⃣ Install Dependencies
@@ -86,19 +106,29 @@ npm install
 <summary>Click to view required `.env` configuration</summary>
 
 ```env
-PORT=5000
+BETTER_AUTH_URL=http://localhost:3000
+BETTER_AUTH_SECRET=your_auth_secret
 MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-STRIPE_SECRET_KEY=your_stripe_secret_key
-CLIENT_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+NEXT_PUBLIC_SERVER_URL=http://localhost:5000
+NEXT_PUBLIC_CLIENT_URL=http://localhost:3000
 ```
 </details>
 
-### 4️⃣ Run the Server
+### 4️⃣ Run the App
 ```bash
 npm run dev
 ```
-The server will be running at `http://localhost:5000`.
+Navigate to `http://localhost:3000` to explore the app!
+
+<br />
+
+## 🔑 Demo Credentials
+Test the app instantly using these Admin credentials:
+> **Email**: `mdnuraalamcse13@gmail.com` <br/>
+> **Password**: `123456.Nur`
 
 <br />
 
